@@ -1,39 +1,40 @@
 from llama_cpp import Llama
-
-llm = Llama(
-    model_path="path/to/your/model.gguf",  # e.g., llama-3-8b-instruct.Q4_K_M.gguf
-    n_ctx=2048,
-    logits_all=True  # <--- needed to get logits/logprobs
-)
-
-
-prompt = "Part: Drill motor, Quantity: 1, Price: $99.00"
-
-output = llm(
-    prompt,
-    temperature=0.0,
-    top_p=1.0,
-    max_tokens=50,
-    stop=["\n"],
-    echo=True  # <-- include the prompt in the output
-)
-
-tokens = output["tokens"]           # list of tokens
-token_strs = output["token_strs"]   # actual strings
-logits = output["logits"]           # raw logits per token
-
 import numpy as np
 
-# Softmax to get probabilities
-def softmax(logits):
-    e = np.exp(logits - np.max(logits))
-    return e / e.sum()
+llm = Llama(
+     model_path="C:/Users/Nitin/models/llama3_8b_q5/meta-llama-3.1-8b-Q5_K_M.gguf",
+     logits_all=True
+     )
 
-# Get top predicted token probabilities
-for i, token in enumerate(token_strs):
-    probs = softmax(logits[i])
-    prob = probs[output["tokens"][i]]  # actual token's prob
-    logprob = np.log(prob)
-    print(f"Token: {token} | LogProb: {logprob:.4f}")
+response = llm.create_completion(
+     prompt="What is AI?",
+     max_tokens=5,
+     logprobs=1,
+     echo=True
+)
+
+# Extract tokens and logprobs
+tokens = response["choices"][0]["logprobs"]["tokens"]
+logprobs = response["choices"][0]["logprobs"]["token_logprobs"]
+
+probs = [np.exp(lp) if lp is not None else 0.0 for lp in logprobs]
+
+print(tokens, probs)
 
 
+for token, prob in zip(tokens, probs):
+    print(f"{token:<15} | {prob*100:.2f}%")
+
+# for token, logprob in zip(
+#     response["choices"][0]["logprobs"]["tokens"],
+#     response["choices"][0]["logprobs"]["token_logprobs"]
+# ):
+#     print(f"{token}: {logprob}")
+
+# for token, logprob in zip(tokens, logprobs):
+#     conf = math.exp(logprob) if logprob is not None else 0.0
+#     print(f"{token:<20} | confidence: {conf:.4f}")
+
+# # Average confidence
+# avg_conf = np.mean([math.exp(lp) for lp in logprobs if lp is not None])
+# print(f"\nAverage confidence: {avg_conf:.4f}")

@@ -9,3 +9,12 @@ def imgProcess(images):
      # denoised = cv2.medianBlur(gray, 3)     # Denoising using median blur
      thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)     # Binarizing Image
      return thresh
+
+
+
+img_path = r"C:\Users\Nitin\Downloads\ABC_Ltd_Bill of materials_1.jpg"
+img = cv2.imread(img_path)
+pre_procssed_image = imgProcess(img)
+cv2.imshow("", pre_procssed_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
