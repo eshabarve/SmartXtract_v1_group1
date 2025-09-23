@@ -24,7 +24,7 @@ import io
 # Set path to Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = r"Tesseract-OCR\tesseract.exe"
 
-def ocr_extraction(file_obj, psm=4):
+def ocr_extraction(clean_img, psm=4):
     """
     Extract text from an uploaded image file using Tesseract OCR.
 
@@ -35,17 +35,11 @@ def ocr_extraction(file_obj, psm=4):
     Returns:
         str: Extracted text as a single string.
     """
-    # Read the uploaded file into a PIL Image
-    img = Image.open(io.BytesIO(file_obj.read()))
-    
-    # Reset file pointer so it can be read again if needed elsewhere
-    file_obj.seek(0)
-
     # Tesseract config
     custom_config = f'--psm {psm}'
 
     # Run OCR
-    extracted_text = pytesseract.image_to_string(img, config=custom_config)
+    extracted_text = pytesseract.image_to_string(clean_img, config=custom_config)
 
     # Clean text
     extracted_text = extracted_text.strip()

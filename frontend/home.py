@@ -33,7 +33,7 @@ with col2:
 uploaded_file = st.file_uploader(
      label="Upload Image or PDF",
      type=["jpg", "jpeg", "png", "pdf"],
-     accept_multiple_files = True, 
+     accept_multiple_files = False, 
      )
 
 if uploaded_file is not None:
@@ -43,11 +43,11 @@ if uploaded_file is not None:
     if st.button("Extract Data"):
         # Show spinner while backend works
         with st.spinner("🔍 Extracting data... please wait..."):
-            try:
+            try:                
                 response = requests.post(
-                    "http://127.0.0.1:5000/extract",
-                    files={"file": uploaded_file}
-                )
+                "http://127.0.0.1:5000",
+                files={"file": uploaded_file.getvalue()},
+            )
                 if response.status_code == 200:
                     result = response.json()
                     st.success("✅ Extraction Successful")
