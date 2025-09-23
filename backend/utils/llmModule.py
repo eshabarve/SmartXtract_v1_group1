@@ -37,7 +37,7 @@ prompt = '''
     '''
 
 
-def llmStructuring(prompt):
+def llmStructuring(ocrText, prompt):
 
     response = ollama.chat(
         model='llama3.1',

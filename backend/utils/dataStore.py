@@ -6,7 +6,7 @@ company_name = "ABC_Ltd"
 document_type = "invoice"
 
 # Extracted content (JSON in string format)
-data = [
+structured_text = [
   {
     "Part": "Drill motor",
     "Quantity": "1",
@@ -89,24 +89,29 @@ data = [
   }
 ]
 
+
+def dataStorageCSV(company_name, document_type, structured_text):
+
 # Ensure output folder exists (optional)
-output_dir = "./DATA/ABC_Ltd/invoice"
-os.makedirs(output_dir, exist_ok=True)
+  output_dir = "./DATA/ABC_Ltd/invoice"
+  os.makedirs(output_dir, exist_ok=True)
 
-# Create a filename using company name and document type
-filename = f"{company_name}_{document_type}.csv"
-filepath = os.path.join(output_dir, filename)
+  # Create a filename using company name and document type
+  filename = f"{company_name}_{document_type}.csv"
+  filepath = os.path.join(output_dir, filename)
 
-# Write to CSV
-if data and isinstance(data, list) and all(isinstance(row, dict) for row in data):
-    # Get headers from keys of first row
-    headers = ["Part", "Quantity", "Price"]
+  # Write to CSV
+  if data and isinstance(data, list) and all(isinstance(row, dict) for row in data):
+      # Get headers from keys of first row
+      headers = ["Part", "Quantity", "Price"]
 
-    with open(filepath, mode='w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=headers)
-        writer.writeheader()
-        writer.writerows(data)
+      with open(filepath, mode='w', newline='', encoding='utf-8') as f:
+          writer = csv.DictWriter(f, fieldnames=headers)
+          writer.writeheader()
+          writer.writerows(data)
 
-    print(f"CSV file saved as: {filepath}")
-else:
-    print("Invalid or empty data. No CSV file created.")
+      print(f"CSV file saved as: {filepath}")
+  else:
+      print("Invalid or empty data. No CSV file created.")
+
+dataStorageCSV(company_name, document_type, data)
