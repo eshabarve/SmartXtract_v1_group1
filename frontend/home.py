@@ -1,5 +1,6 @@
 # importing  Utilities
 import streamlit as st
+import requests
 
 st.set_page_config(page_title="SmartXtracts", layout="centered")
 
@@ -36,7 +37,7 @@ uploaded_file = st.file_uploader(
      )
 
 if uploaded_file is not None:
-    st.info(f"Uploaded file: {uploaded_file.name}")
+    st.info(f"Uploaded file")
 
 
     if st.button("Extract Data"):

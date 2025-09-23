@@ -1,20 +1,53 @@
-#**************************************OCR EXTRACTION USING PADDLE**********************************
+# def ocr_extraction(img_path):
+#     # Import inside the function
+#     from paddleocr import PaddleOCR
 
-# Initialize the OCR engine
-# For a specific language, e.g., English: ocr = PaddleOCR(lang='en')
-# For multiple languages, e.g., English and Chinese: ocr = PaddleOCR(lang=['en', 'ch'])
-from paddleocr import PaddleOCR
-ocr = PaddleOCR(use_angle_cls=True, lang='en') # 'use_angle_cls=True' helps with rotated text
-img_path = "page1.png" # Replace with the actual path to your PNG image
-result = ocr.predict(img_path) # 'cls=False' if angle classification is not needed 
-print(result)
+#     # Initialize OCR engine
+#     ocr = PaddleOCR(use_angle_cls=True, lang='en')  # handles rotated text
 
-if result and "rec_texts" in result[0]:
-    texts = result[0]["rec_texts"]
-    print(texts)  # Prints the list of extracted texts
-else:
-    print("No text detected")
+#     # Run OCR on the image
+#     result = ocr.predict(img_path)  # 'cls=False' if angle classification is not needed
 
+#     # Extract recognized text
+#     if result and "rec_texts" in result[0]:
+#         texts = result[0]["rec_texts"]
+#         final_output = " ".join(texts)
+#     else:
+#         final_output = ""  # return empty string if no text detected
 
-final_output= " ".join(texts)
-print(final_output)
+#     return final_output 
+
+from PIL import Image
+import pytesseract
+import io
+
+# Set path to Tesseract executable
+pytesseract.pytesseract.tesseract_cmd = r"Tesseract-OCR\tesseract.exe"
+
+def ocr_extraction(file_obj, psm=4):
+    """
+    Extract text from an uploaded image file using Tesseract OCR.
+
+    Args:
+        file_obj: File object from Flask (request.files['file'])
+        psm (int): Page segmentation mode for Tesseract. Default is 4.
+
+    Returns:
+        str: Extracted text as a single string.
+    """
+    # Read the uploaded file into a PIL Image
+    img = Image.open(io.BytesIO(file_obj.read()))
+    
+    # Reset file pointer so it can be read again if needed elsewhere
+    file_obj.seek(0)
+
+    # Tesseract config
+    custom_config = f'--psm {psm}'
+
+    # Run OCR
+    extracted_text = pytesseract.image_to_string(img, config=custom_config)
+
+    # Clean text
+    extracted_text = extracted_text.strip()
+
+    return extracted_text
