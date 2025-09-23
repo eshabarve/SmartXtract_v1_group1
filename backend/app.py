@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-# from utils.pdftoimg import pdftoimg
+from utils.PDF_to_image import pdf_to_images
 from utils.imgPrepProcess import imgProcess
 # from utils.ocrExtraction import extractOCRText
 from utils.llmModule import llmStructuring
@@ -19,6 +19,8 @@ def message():
 
 def extract_data():
      file = request.files['file']
+     poppler_path=r"poppler\Library\bin"
+     img=pdf_to_images(file,poppler_path)
      clean_img = imgProcess(file)
      structured_text = llmStructuring()
 
