@@ -11,4 +11,4 @@ def pdf_to_images(pdf_path):
         img.save(filename, "PNG")
         output_files.append(filename)
 
-    return output_files
+    return output_files 
