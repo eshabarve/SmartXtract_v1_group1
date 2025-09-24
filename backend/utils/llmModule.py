@@ -10,7 +10,4 @@ def llmStructuring(extracted_text, prompt):
         ],
         
     )
-
-    print(response['message']['content'])
-
     return response['message']['content']
