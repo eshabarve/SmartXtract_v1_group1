@@ -20,7 +20,7 @@ def compute_confidence(ocr_lines, llm_output, embedding_similarity=0.8):
     field_score = matched / max(len(llm_table), 1)
 
     # 3. Embedding similarity (use real embeddings later)
-    embed_score = embedding_similarity  
+    embed_score = embedding_similarity
 
     # Weighted sum
     final_conf = (

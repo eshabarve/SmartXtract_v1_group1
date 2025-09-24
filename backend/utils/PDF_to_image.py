@@ -1,13 +1,14 @@
-from pdf2image import convert_from_path
 
-poppler_path = r"C:\poppler\poppler-25.07.0\Library\bin"
+def pdf_to_images(pdf_path):
+   
+    from pdf2image import convert_from_path  # import inside function
 
-# Convert PDF pages to images
-images = convert_from_path("Downloads/Onion_pvt_ltd_invoice_1.pdf", poppler_path=poppler_path, use_pdftocairo=True)
+    images = convert_from_path(pdf_path, poppler_path=poppler_path, use_pdftocairo=True)
+    output_files = []
 
-# Save first page as PNG
-images[0].save("page1.png", "PNG")
-print("PDF converted to image!!")
+    for i, img in enumerate(images):
+        filename = f"{output_prefix}_{i+1}.png"
+        img.save(filename, "PNG")
+        output_files.append(filename)
 
-from IPython.display import display
-display(images[0])
+    return output_files 
