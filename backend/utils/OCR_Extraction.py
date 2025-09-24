@@ -1,8 +1,3 @@
-#**************************************OCR EXTRACTION USING PADDLE**********************************
-
-# Initialize the OCR engine
-# For a specific language, e.g., English: ocr = PaddleOCR(lang='en')
-# For multiple languages, e.g., English and Chinese: ocr = PaddleOCR(lang=['en', 'ch'])
 from paddleocr import PaddleOCR
 ocr = PaddleOCR(use_angle_cls=True, lang='en') # 'use_angle_cls=True' helps with rotated text
 img_path = "page1.png" # Replace with the actual path to your PNG image
