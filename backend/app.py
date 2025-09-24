@@ -1,6 +1,6 @@
 import traceback
 from flask import Flask, request
-#from utils.PDF_to_image import pdf_to_images
+from utils.PDF_to_image import pdf_to_images
 from utils.imgPrepProcess import imgProcess
 from utils.OCR_Extraction import ocr_extraction
 from utils.llmModule import llmStructuring
@@ -27,9 +27,10 @@ def extract_data():
           print("📂 File received:", file)
 
           #poppler_path=r"poppler\Library\bin"
-          #img=pdf_to_images(file,poppler_path)
+          img=pdf_to_images(file)
+          print("pdf to images done")
 
-          clean_img = imgProcess(file)
+          clean_img = imgProcess(img)
           print("🖼️ Output of imgProcess:", type(clean_img), clean_img)
 
           extracted_text= ocr_extraction(clean_img)

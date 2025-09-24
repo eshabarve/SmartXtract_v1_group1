@@ -4,8 +4,8 @@ from PIL import Image
 
 def imgProcess(images):
      
-     img = Image.open(images).convert("RGB")
-     cvImage = np.array(img)    # Converting to numpy image
+     images = images.convert("RGB")
+     cvImage = np.array(images)    # Converting to numpy image
      cvImage = cv2.cvtColor(cvImage, cv2.COLOR_RGB2BGR)     # Converting from RGB to BGR
      gray = cv2.cvtColor(cvImage, cv2.COLOR_BGR2GRAY)     # Converting from BGR to Gray
      # denoised = cv2.medianBlur(gray, 3)     # Denoising using median blur
