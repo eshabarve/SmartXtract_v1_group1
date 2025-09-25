@@ -37,7 +37,7 @@ uploaded_file = st.file_uploader(
      )
 
 if uploaded_file is not None:
-    st.info(f"Uploaded file")
+    st.info(f"Uploaded file: {uploaded_file.name}")
 
     if st.button("Extract Data"):
         # Show spinner while backend works
@@ -45,11 +45,15 @@ if uploaded_file is not None:
             try:                
                 response = requests.post(
                 "http://127.0.0.1:5000",
+<<<<<<< HEAD
                 files={"file": uploaded_file.getvalue()},
                 data={
                     "company_name": company_name,
                     "document_type": doc_type,
                 }
+=======
+                files={"file": (uploaded_file.name, uploaded_file, uploaded_file.type)} #uploaded_file.getvalue(),
+>>>>>>> 73752bcb9f2db862104055043459c5aec8befecd
             )
                 if response.status_code == 200:
                     result = response.json()

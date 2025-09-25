@@ -1,4 +1,5 @@
 import traceback
+<<<<<<< HEAD
 from flask import Flask, request
 from utils.pdf_to_image import pdf_to_images
 from utils.img_prep_process import img_process
@@ -7,12 +8,24 @@ from utils.prompt_generator import generate_prompt
 from utils.llm_module import llm_structuring
 # from utils.conf_score import conf_scoring
 from utils.data_store import data_storage_csv
+=======
+from flask import Flask, request, jsonify
+from PIL import Image
+from utils.initial_file_handling import handle_file
+from utils.PDF_to_image import pdf_to_images
+from utils.imgPrepProcess import imgProcess
+from utils.OCR_Extraction import ocr_extraction
+from utils.llmModule import llmStructuring
+# from utils.confModule import confScoring
+from utils.dataStore import dataStorageCSV
+>>>>>>> 73752bcb9f2db862104055043459c5aec8befecd
 # from utils.integration import intgrtIntoEntpriceSys
 
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET','POST'])
+
 def extract_data():
     
      try:
@@ -31,10 +44,30 @@ def extract_data():
                return {"error": "company_name and document_type are required"}, 400
           
 
+
+          filename = file.filename.lower()
+
+          if filename.endswith(".pdf"):
+            
+            img = pdf_to_images(file)   # returns PIL image
+            print("📄 PDF converted to image")
+
+          elif filename.endswith((".jpg", ".jpeg", ".png")):
+            # Directly open image files
+            img = Image.open(file).convert("RGB")
+            print("🖼️ Image file was recieved")
+          else:
+            return jsonify({"error": "Unsupported file type"}), 400
+
+
+          #img=pdf_to_images(file)
+          #print("pdf to images done!!")
+
           #PDF to Image Module
           # poppler_path=r"poppler\Library\bin"
           img=pdf_to_images(file)
           print("Converted PDF into Image")
+
 
           # Image Pre-Processing Module
           clean_img = img_process(img)
