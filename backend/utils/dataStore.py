@@ -3,19 +3,20 @@ import csv
 import re
 import os
 
-company_name = "ABC_Ltd"
-document_type = "invoice"
-
 def dataStorageCSV(company_name, document_type, structured_text):
     
     if not structured_text or not structured_text.strip():
-        print("❌ JSON object/array is empty")
+        print("JSON Object/Array is empty. ")
+        return []
+    
+    if not company_name and document_type:
+        print("Module did not get either Company Name or Document Type. ")
         return []
 
-    # Regex: capture content between ```...``` or just raw JSON
+    # Capture content between ```...``` or just raw JSON
     match = re.search(r"(\[.*\]|\{.*\})", structured_text, flags=re.DOTALL)
     if not match:
-        print("❌ No JSON object/array found in LLM output")
+        print("No JSON object/array found in LLM output. ")
         print("Raw output:\n", structured_text)
         return []
 
@@ -25,31 +26,38 @@ def dataStorageCSV(company_name, document_type, structured_text):
 
     try:
         structured_text = json.loads(cleaned)
-    
     except json.JSONDecodeError as e:
-        print("❌ JSON parsing failed:", e)
+        print("JSON parsing failed:", e)
         print("Extracted content after cleaning:\n", cleaned)
         return []
+    
+    # --- Ensure structured_text is list of dicts ---
+    if isinstance(structured_text, dict):
+        structured_text = [structured_text]
 
-    # Ensure output folder exists (optional)
-    output_dir = "./DATA/ABC_Ltd/invoice"
-    os.makedirs(output_dir, exist_ok=True)
+    if not (isinstance(structured_text, list) and all(isinstance(row, dict) for row in structured_text)):
+        print("Invalid or empty data. No CSV file created. ")
+        return []
 
-    # Create a filename using company name and document type
-    filename = f"{company_name}_{document_type}.csv"
-    filepath = os.path.join(output_dir, filename)
+    # Ensure output folder exists
+    output_dir = "./DATA"
+    company_dir = os.path.join(output_dir, company_name)    # CompanyName Directory in DATA directory
+    doc_dir = os.path.join(company_dir, document_type)  # DocumenName Directory in Company directory
+    os.makedirs(doc_dir, exist_ok=True)
+
+    # Create Filename and store in document directory
+    filename = f"{company_name}_{document_type}.csv".replace(" ", "_")
+    filepath = os.path.join(doc_dir, filename)
 
     # Write to CSV
-    if structured_text and isinstance(structured_text, list) and all(isinstance(row, dict) for row in structured_text):
-        # Get headers from keys of first row
-        headers = ["Part", "Quantity", "Price"]
+    headers = set()
+    for row in structured_text:
+        headers.update(row.keys())
+    headers = list(headers)
 
-        with open(filepath, mode='w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=headers)
-            writer.writeheader()
-            writer.writerows(structured_text)
+    with open(filepath, mode='w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=headers)
+        writer.writeheader()
+        writer.writerow(row)
 
         print(f"CSV file saved as: {filepath}")
-
-    else:
-        print("Invalid or empty data. No CSV file created.")

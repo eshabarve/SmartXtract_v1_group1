@@ -10,7 +10,7 @@ def imgProcess(images):
      gray = cv2.cvtColor(cvImage, cv2.COLOR_BGR2GRAY)     # Converting from BGR to Gray
      # denoised = cv2.medianBlur(gray, 3)     # Denoising using median blur
      thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)     # Binarizing Image
-     print("✅ imgProcess: shape =", thresh.shape, "dtype =", thresh.dtype)
+     print("imgProcess: shape =", thresh.shape, "dtype =", thresh.dtype)
      pil_img = Image.fromarray(thresh)
      return pil_img
 

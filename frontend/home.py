@@ -15,7 +15,7 @@ col1, col2 = st.columns(2)
 with col1:
      company = st.selectbox(
      label="Select Company",
-     options=("Onion Pvt Ltd", "Hamlet LLP", "Schrute Labs", "Starfish Co", "Tesla"),
+     options=("ABC Ltd"),
      index=None,
      placeholder="Choose an option",
      )
@@ -23,7 +23,7 @@ with col1:
 with col2:
      docType = st.selectbox(
      label="Select Document Type",
-     options=("Purchase Order", "Invoice", "Reciept", "Form", "Contract", "ID Card", "",),
+     options=("Invoice"),
      index=None,
      placeholder="Choose an option",
      )
