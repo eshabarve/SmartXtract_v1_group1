@@ -44,17 +44,14 @@ if uploaded_file is not None:
         with st.spinner("🔍 Extracting data... please wait..."):
             try:                
                 response = requests.post(
-                "http://127.0.0.1:5000",
-<<<<<<< HEAD
-                files={"file": uploaded_file.getvalue()},
-                data={
-                    "company_name": company_name,
-                    "document_type": doc_type,
-                }
-=======
-                files={"file": (uploaded_file.name, uploaded_file, uploaded_file.type)} #uploaded_file.getvalue(),
->>>>>>> 73752bcb9f2db862104055043459c5aec8befecd
-            )
+                    "http://127.0.0.1:5000",
+                    files={"file": (uploaded_file.name, uploaded_file, uploaded_file.type)},
+                    data={
+                        "company_name": company_name,
+                        "document_type": doc_type,
+                    }
+                )
+                
                 if response.status_code == 200:
                     result = response.json()
                     st.success("Extraction Successful")
