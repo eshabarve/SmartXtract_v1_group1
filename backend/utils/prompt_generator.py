@@ -8,7 +8,10 @@ def generate_prompt(company_name, document_type, extracted_text):
      Each object should have consistent keys across rows.
      If a field is missing in OCR, set is as Null.
      Do not include any explaination, only JSON.
-
      """
+
+     doc_fields ={
+          
+     }
 
      return prompt
