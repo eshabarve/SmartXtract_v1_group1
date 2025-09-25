@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 from PIL import Image
 
-def imgProcess(images):
+def img_process(images):
      
      images = images.convert("RGB")
-     cvImage = np.array(images)    # Converting to numpy image
-     cvImage = cv2.cvtColor(cvImage, cv2.COLOR_RGB2BGR)     # Converting from RGB to BGR
-     gray = cv2.cvtColor(cvImage, cv2.COLOR_BGR2GRAY)     # Converting from BGR to Gray
+     cv_image = np.array(images)    # Converting to numpy image
+     cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)     # Converting from RGB to BGR
+     gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)     # Converting from BGR to Gray
      # denoised = cv2.medianBlur(gray, 3)     # Denoising using median blur
      thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)     # Binarizing Image
      print("imgProcess: shape =", thresh.shape, "dtype =", thresh.dtype)

@@ -3,13 +3,13 @@ import csv
 import re
 import os
 
-def dataStorageCSV(company_name, document_type, structured_text):
+def data_storage_csv(company_name, document_type, structured_text):
     
     if not structured_text or not structured_text.strip():
         print("JSON Object/Array is empty. ")
         return []
     
-    if not company_name and document_type:
+    if not company_name or document_type:
         print("Module did not get either Company Name or Document Type. ")
         return []
 

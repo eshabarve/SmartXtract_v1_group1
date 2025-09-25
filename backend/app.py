@@ -1,11 +1,12 @@
 import traceback
 from flask import Flask, request
-from utils.PDF_to_image import pdf_to_images
-from utils.imgPrepProcess import imgProcess
-from utils.OCR_Extraction import ocr_extraction
-from utils.llmModule import llmStructuring
-# from utils.confModule import confScoring
-from utils.dataStore import dataStorageCSV
+from utils.pdf_to_image import pdf_to_images
+from utils.img_prep_process import img_process
+from utils.ocr_extraction import ocr_extraction
+from utils.prompt_generator import generate_prompt
+from utils.llm_module import llm_structuring
+# from utils.conf_score import conf_scoring
+from utils.data_store import data_storage_csv
 # from utils.integration import intgrtIntoEntpriceSys
 
 
@@ -17,19 +18,18 @@ def extract_data():
      try:
           # Getting Files, Compan Name, Document Type
           file = request.files.get('file')
+          print("File received:", file.filename)
           company_name = request.form.get('company_name')
+          print("Company Name:", company_name)
           document_type = request.form.get('document_type')
+          print("Document Type:", document_type)
 
           if not file:
                return {"error": "No file received"}, 400
           
-          if not company_name and not document_type:
+          if not company_name or not document_type:
                return {"error": "company_name and document_type are required"}, 400
           
-          print("File received:", file.filename)
-          print("Company Name:", company_name)
-          print("Document Type:", document_type)
-
 
           #PDF to Image Module
           # poppler_path=r"poppler\Library\bin"
@@ -37,45 +37,28 @@ def extract_data():
           print("Converted PDF into Image")
 
           # Image Pre-Processing Module
-          clean_img = imgProcess(img)
+          clean_img = img_process(img)
           print("Output of imgProcess:", type(clean_img), clean_img)
 
           # OCR Extraction Module
           extracted_text= ocr_extraction(clean_img)
           print("Output of ocr_extraction:", type(extracted_text), extracted_text)
+          
+          # Prompt generator Module
+          prompt = generate_prompt(company_name, document_type, extracted_text)
 
           # LLM Structuring Module
-          prompt = f'''You are an intelligent assistant that extracts structured information from OCR scanned invoices or receipts or purchase.
-
-               Given OCR text that lists parts, quantities, and prices extract each item into the format:
-
-               Part | Quantity | Price
-
-               Each row represents:
-               - Parts: The name or description of the item
-               - Quantity: A number
-               - Price: In dollars
-
-               Rules:
-               - Extract Part, Quantity, and Price from this OCR text. Always output a valid JSON list.
-               - If a value is not found, set it explicitly to null.
-               - Remove or replace unwanted characters such as ", ”, ‘, ’, “ inside Part names with normal quotes.
-               - Do not include explanations, only return the JSON.
-
-               OCR Text:
-               # {extracted_text}
-          '''
-          structured_text = llmStructuring(extracted_text, prompt)
+          structured_text = llm_structuring(extracted_text, prompt)
           print("Output of llmStructuring:", type(structured_text), structured_text)
 
           # Data Storage Module
-          dataStorageCSV(company_name, document_type, structured_text)
+          data_storage_csv(company_name, document_type, structured_text)
           print("Data is stored")
           return {"status": "done"}
 
      except Exception as e:
           tb = traceback.format_exc()
-          print("❌ Error in Flask endpoint:\n", tb)
+          print("Error in Flask endpoint:\n", tb)
           return {"error": str(e), "traceback": tb}, 500
 
 

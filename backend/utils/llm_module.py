@@ -1,7 +1,7 @@
 import ollama
 
 
-def llmStructuring(extracted_text, prompt):
+def llm_structuring(extracted_text, prompt):
 
     response = ollama.chat(
         model='llama3.1',
