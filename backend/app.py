@@ -1,5 +1,7 @@
 import traceback
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from PIL import Image
+from utils.initial_file_handling import handle_file
 from utils.PDF_to_image import pdf_to_images
 from utils.imgPrepProcess import imgProcess
 from utils.OCR_Extraction import ocr_extraction
@@ -12,6 +14,7 @@ from utils.dataStore import dataStorageCSV
 app = Flask(__name__)
 
 @app.route('/', methods=['GET','POST'])
+
 def extract_data():
     
      try:
@@ -23,9 +26,23 @@ def extract_data():
           # file = request.files['file']
           # print("📂 File received:", file)
 
-          #poppler_path=r"poppler\Library\bin"
-          img=pdf_to_images(file)
-          print("pdf to images done")
+          filename = file.filename.lower()
+
+          if filename.endswith(".pdf"):
+            
+            img = pdf_to_images(file)   # returns PIL image
+            print("📄 PDF converted to image")
+
+          elif filename.endswith((".jpg", ".jpeg", ".png")):
+            # Directly open image files
+            img = Image.open(file).convert("RGB")
+            print("🖼️ Image file was recieved")
+          else:
+            return jsonify({"error": "Unsupported file type"}), 400
+
+
+          #img=pdf_to_images(file)
+          #print("pdf to images done!!")
 
           clean_img = imgProcess(img)
           print("🖼️ Output of imgProcess:", type(clean_img), clean_img)
