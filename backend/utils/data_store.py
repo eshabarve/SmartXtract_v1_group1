@@ -9,7 +9,7 @@ def data_storage_csv(company_name, document_type, structured_text):
         print("JSON Object/Array is empty. ")
         return []
     
-    if not company_name or document_type:
+    if not company_name or not document_type:
         print("Module did not get either Company Name or Document Type. ")
         return []
 
@@ -58,6 +58,8 @@ def data_storage_csv(company_name, document_type, structured_text):
     with open(filepath, mode='w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=headers)
         writer.writeheader()
-        writer.writerow(row)
+        for row in structured_text:
+            writer.writerow(row)
 
         print(f"CSV file saved as: {filepath}")
+        return filepath

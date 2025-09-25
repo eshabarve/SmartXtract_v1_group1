@@ -63,8 +63,12 @@ def extract_data():
           print("Output of llmStructuring:", type(structured_text), structured_text)
 
           # Data Storage Module
-          data_storage_csv(company_name, document_type, structured_text)
-          print("Data is stored")
+          result = data_storage_csv(company_name, document_type, structured_text)
+          if result:
+               print("Data is stored at: ", type(result), result)
+          else:
+              print("Data was not stored, check data_store module.")
+
           return {"status": "done"}
 
      except Exception as e:
