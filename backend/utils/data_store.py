@@ -23,6 +23,7 @@ def data_storage_csv(company_name, document_type, structured_text):
     cleaned = match.group(1).strip()
     cleaned = cleaned.replace("“", "\"").replace("”", "\"")
     cleaned = cleaned.replace("‘", "'").replace("’", "'")
+    cleaned = cleaned.replace("Null", "null")
 
     try:
         structured_text = json.loads(cleaned)
@@ -55,7 +56,7 @@ def data_storage_csv(company_name, document_type, structured_text):
         headers.update(row.keys())
     headers = list(headers)
 
-    with open(filepath, mode='w', newline='', encoding='utf-8') as f:
+    with open(filepath, mode='w', newline='', encoding='utf-8-sig') as f:
         writer = csv.DictWriter(f, fieldnames=headers)
         writer.writeheader()
         for row in structured_text:

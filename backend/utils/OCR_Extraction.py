@@ -25,7 +25,7 @@ import io
 # Set path to Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = r"Tesseract-OCR\tesseract.exe"
 
-def ocr_extraction(clean_img, psm=3):
+def ocr_extraction(clean_img, psm=4):
     """
     Extract text from an uploaded image file using Tesseract OCR.
 
@@ -40,7 +40,7 @@ def ocr_extraction(clean_img, psm=3):
     custom_config = f'--psm {psm}'
 
     # Run OCR
-    extracted_text = pytesseract.image_to_string(clean_img, config=custom_config)
+    extracted_text = pytesseract.image_to_string(clean_img, config=custom_config, lang="hin")
 
     # Clean text
     extracted_text = extracted_text.strip()
