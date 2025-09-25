@@ -37,7 +37,7 @@ uploaded_file = st.file_uploader(
      )
 
 if uploaded_file is not None:
-    st.info(f"Uploaded file")
+    st.info(f"Uploaded file: {uploaded_file.name}")
 
 
     if st.button("Extract Data"):
@@ -46,7 +46,7 @@ if uploaded_file is not None:
             try:                
                 response = requests.post(
                 "http://127.0.0.1:5000",
-                files={"file": uploaded_file.getvalue()},
+                files={"file": (uploaded_file.name, uploaded_file, uploaded_file.type)} #uploaded_file.getvalue(),
             )
                 if response.status_code == 200:
                     result = response.json()
