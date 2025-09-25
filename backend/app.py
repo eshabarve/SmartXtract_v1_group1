@@ -18,13 +18,22 @@ app = Flask(__name__)
 def extract_data():
     
      try:
+          # Getting Files, Compan Name, Document Type
           file = request.files.get('file')
+          company_name = request.form.get('company_name')
+          document_type = request.form.get('document_type')
+
           if not file:
                return {"error": "No file received"}, 400
-          print("📂 File received:", file.filename)
+          
+          if not company_name and not document_type:
+               return {"error": "company_name and document_type are required"}, 400
+          
+          print("File received:", file.filename)
+          print("Company Name:", company_name)
+          print("Document Type:", document_type)
 
-          # file = request.files['file']
-          # print("📂 File received:", file)
+
 
           filename = file.filename.lower()
 
@@ -44,41 +53,47 @@ def extract_data():
           #img=pdf_to_images(file)
           #print("pdf to images done!!")
 
+          #PDF to Image Module
+          # poppler_path=r"poppler\Library\bin"
+          img=pdf_to_images(file)
+          print("Converted PDF into Image")
+
+
+          # Image Pre-Processing Module
           clean_img = imgProcess(img)
-          print("🖼️ Output of imgProcess:", type(clean_img), clean_img)
+          print("Output of imgProcess:", type(clean_img), clean_img)
 
+          # OCR Extraction Module
           extracted_text= ocr_extraction(clean_img)
-          print("🔤 Output of ocr_extraction:", type(extracted_text), extracted_text)
+          print("Output of ocr_extraction:", type(extracted_text), extracted_text)
 
-          prompt = f'''
-     You are an intelligent assistant that extracts structured information from OCR scanned invoices or receipts or purchase.
+          # LLM Structuring Module
+          prompt = f'''You are an intelligent assistant that extracts structured information from OCR scanned invoices or receipts or purchase.
 
-     Given OCR text that lists parts, quantities, and prices extract each item into the format:
+               Given OCR text that lists parts, quantities, and prices extract each item into the format:
 
-     Part | Quantity | Price
+               Part | Quantity | Price
 
-     Each row represents:
-     - Parts: The name or description of the item
-     - Quantity: A number
-     - Price: In dollars
+               Each row represents:
+               - Parts: The name or description of the item
+               - Quantity: A number
+               - Price: In dollars
 
-     Rules:
-     - Extract Part, Quantity, and Price from this OCR text. Always output a valid JSON list.
-     - If a value is not found, set it explicitly to null.
-     - Remove or replace unwanted characters such as ", ”, ‘, ’, “ inside Part names with normal quotes.
-     - Do not include explanations, only return the JSON.
+               Rules:
+               - Extract Part, Quantity, and Price from this OCR text. Always output a valid JSON list.
+               - If a value is not found, set it explicitly to null.
+               - Remove or replace unwanted characters such as ", ”, ‘, ’, “ inside Part names with normal quotes.
+               - Do not include explanations, only return the JSON.
 
-     OCR Text:
-     # {extracted_text}
-     '''
-
+               OCR Text:
+               # {extracted_text}
+          '''
           structured_text = llmStructuring(extracted_text, prompt)
-          print("📑 Output of llmStructuring:", type(structured_text), structured_text)
+          print("Output of llmStructuring:", type(structured_text), structured_text)
 
-          company_name = "ABC_Ltd"
-          document_type = "invoice"
+          # Data Storage Module
           dataStorageCSV(company_name, document_type, structured_text)
-          print("📑 Data is stored")
+          print("Data is stored")
           return {"status": "done"}
 
      except Exception as e:
