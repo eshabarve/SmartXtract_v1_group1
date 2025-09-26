@@ -1,24 +1,51 @@
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 def img_process(images):
-     
-     images = images.convert("RGB")
-     cv_image = np.array(images)    # Converting to numpy image
-     cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)     # Converting from RGB to BGR
-     gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)     # Converting from BGR to Gray
-     # denoised = cv2.medianBlur(gray, 3)     # Denoising using median blur
-     thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)     # Binarizing Image
-     print("imgProcess: shape =", thresh.shape, "dtype =", thresh.dtype)
-     pil_img = Image.fromarray(thresh)
-     return pil_img
+    try:
+        # Convert to RGB
+        try:
+            images = images.convert("RGB")
+        except UnidentifiedImageError:
+            raise ValueError("Invalid image format. Could not convert to RGB.")
+        
+        # Convert PIL -> NumPy -> OpenCV
+        try:
+            cv_image = np.array(images)
+            cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+        except Exception as e:
+            raise RuntimeError(f"Error converting image to OpenCV format: {e}")
+        
+        # Grayscale Conversion
+        try:
+            gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+        except Exception as e:
+            raise RuntimeError(f"Error converting image to grayscale: {e}")
+        
+        # Adaptive Thresholding ( Binarization )
+        try:
+            thresh = cv2.adaptiveThreshold(
+                gray, 
+                255, 
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+                cv2.THRESH_BINARY, 
+                11, 
+                2
+            )
+        except Exception as e:
+            raise RuntimeError(f"Error during thresholding: {e}")
 
+        # Convert back to PIL
+        try:
+            pil_img = Image.fromarray(thresh)
+        except Exception as e:
+            raise RuntimeError(f"Error converting processed image back to PIL: {e}")
 
-
-# img_path = r"C:\Users\Nitin\Downloads\ABC_Ltd_Bill of materials_1.jpg"
-# img = cv2.imread(img_path)
-# pre_procssed_image = imgProcess(img)
-# cv2.imshow("", pre_procssed_image)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+        # Debug print
+        print("imgProcess successful: shape =", thresh.shape, "dtype =", thresh.dtype)
+        return pil_img
+    
+    except Exception as e:
+        print("Error in img_process:", str(e))
+        raise
